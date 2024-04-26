@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>MathJax TeX Test Page</title>
+    <script src="https://polyfill.io/v3/polyfill.min.js?features=es6"></script>
+    <script type="text/javascript" id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml.js"></script>
+  </head>
+  <body>
+
+  </body>
+
+<script type="module">
+  import Fraction from "fraction.js"
+
+  // 创建矩阵
+  function createMatrix() {
+    let matrix = []
+    for (let i = 0; i < arguments.length; i++) {
+      matrix.push(arguments[i])
+    }
+    return matrix
+  }
+  // 创建单位矩阵
+  function createUnitMatrix(n) {
+    let matrix = []
+    for (let i = 0; i < n; i++) {
+      let arr = new Array(n).fill(0)
+      arr[i] = 1
+      matrix.push(arr)
+    }
+    return matrix
+  }
+  // 两个矩阵的拼接
+  function MatricesUnion(matrix1, matrix2) {
+    let union = []
+    for (i = 0; i < matrix.length; i++) {
+      union.push(matrix1[i].concat(matrix2[i]))
+    }
+    return union
+  }
+  // 矩阵渲染
+  Array.prototype.display = function() {
+    let matrixStr = ''
+    for (let i = 0; i < this.length; i++) {
+      for (let j = 0; j < this[i].length; j++) {
+        if (!Number.isInteger(this[i][j])) {
+          const fraction = new Fraction(this[i][j])
+          console.log('fraction: ', fraction)
+          this[i][j] = `\\frac{${ fraction.n }}{${ fraction.d }}`
+        }
+      }
+      matrixStr += this[i].join('&') + '\\\\'
+    }
+    let div = document.createElement('div')
+    div.innerHTML = `$$ \\begin{bmatrix} ${ matrixStr } \\end{bmatrix}$$`
+    document.body.appendChild(div)
+  }
+  // 线性消元
+  function elimination(matrix) {
+    // 选择基准行
+    for (let baseRow = 0; baseRow < matrix.length - 1; baseRow++) {
+      // 选择被修改行
+      for (let row = baseRow + 1; row < matrix.length; row++) {
+        const l = - (matrix[row][baseRow] / matrix[baseRow][baseRow])
+        // 修改行内各个元素
+        for(let column = 0; column < matrix[row].length; column++) {
+          matrix[row][column] +=  l * matrix[baseRow][column]
+        }
+      }
+    }
+    return matrix
+  }
+  let matrix = createMatrix([2, -1, 0], [-1, 2, -1], [0, -1, 2])
+  let unit = createUnitMatrix(3)
+  let unionMatrix = MatricesUnion(matrix, unit)
+  matrix.display()
+  elimination(unionMatrix).display()
+</script>
+</html>
